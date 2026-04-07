@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String            @id
+  name      String?
+  createdAt DateTime          @default(now())
+  progresses EpisodeProgress[]
+}
+
+model Episode {
+  id          String            @id
+  order       Int
+  title       String
+  fullTitle   String
+  description String
+  lesson      String
+  ageGroup    String
+  videoId     String
+  thumbnailUrl String
+  tags        String
+  events      String
+  games       Game[]
+  progresses  EpisodeProgress[]
+}
+
+model Game {
+  id             String   @id
+  episodeId      String
+  type           String
+  title          String
+  prompt         String
+  difficulty     String
+  points         Int
+  data           String
+  successMessage String
+  retryMessage   String
+  episode        Episode  @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  answers        GameAnswer[]
+}
+
+model EpisodeProgress {
+  id             String      @id
+  userId         String
+  episodeId      String
+  completedGames Int         @default(0)
+  totalGames     Int
+  score          Int         @default(0)
+  maxScore       Int
+  percentage     Int         @default(0)
+  completed      Boolean     @default(false)
+  updatedAt      DateTime    @updatedAt
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  episode        Episode     @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  answers        GameAnswer[]
+
+  @@unique([userId, episodeId])
+}
+
+model GameAnswer {
+  id         String          @id
+  progressId String
+  gameId     String
+  score      Int
+  status     String
+  answer     String
+  progress   EpisodeProgress @relation(fields: [progressId], references: [id], onDelete: Cascade)
+  game       Game            @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@unique([progressId, gameId])
+}
