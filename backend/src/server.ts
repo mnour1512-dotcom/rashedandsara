@@ -1,10 +1,12 @@
 import cors from "cors";
 import express from "express";
+import http from "http";
 import { episodesRouter } from "./routes/episodes";
 import { progressRouter } from "./routes/progress";
 
 const app = express();
 const port = Number(process.env.PORT || 4000);
+const host = "0.0.0.0";
 const allowedOrigins = (process.env.FRONTEND_URL || "")
   .split(",")
   .map((origin) => origin.trim())
@@ -43,6 +45,8 @@ app.use((error: unknown, _request: express.Request, response: express.Response, 
   });
 });
 
-app.listen(port, () => {
-  console.log(`API listening on port ${port}`);
+const server = http.createServer(app);
+
+server.listen(port, host, () => {
+  console.log(`API listening on http://${host}:${port}`);
 });
