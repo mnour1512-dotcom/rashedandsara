@@ -7,6 +7,7 @@ import type { Episode, EpisodeProgress, Game } from "@/lib/types";
 type HeroName = "راشد" | "سارة";
 
 type SafeAnswer = EpisodeProgress["answers"][number];
+type AnswerStatus = SafeAnswer["status"];
 
 export function EpisodePage({
   episode,
@@ -47,12 +48,12 @@ export function EpisodePage({
         });
         setProgress(createSafeProgress(response.data, safeGames, episode.id));
       } catch {
-        const nextAnswers = [
+        const nextAnswers: SafeAnswer[] = [
           ...(Array.isArray(progress.answers) ? progress.answers : []).filter((answer) => answer.gameId !== game.id),
           {
             gameId: game.id,
             score: isCorrect ? game.points : 0,
-            status: isCorrect ? "correct" : "wrong",
+            status: (isCorrect ? "correct" : "wrong") as AnswerStatus,
             answer: payload
           }
         ];
