@@ -404,6 +404,8 @@ function createMemoryGame(episode: Episode): Game {
 }
 
 function createArcadeGame(episode: Episode): Game {
+  const episodeNumber = typeof episode.number === "number" ? episode.number : episode.order;
+
   return {
     id: `${episode.id}-g3`,
     episodeId: episode.id,
@@ -414,7 +416,7 @@ function createArcadeGame(episode: Episode): Game {
     points: 25,
     data: {
       catcher: {
-        playerLabel: episode.number % 2 === 0 ? "راشد" : "سارة",
+        playerLabel: episodeNumber % 2 === 0 ? "راشد" : "سارة",
         goodItems: episode.tags.slice(0, 4),
         badItems: ["تشتت", "فوضى", "تأجيل", "إهمال"],
         goal: 5,
